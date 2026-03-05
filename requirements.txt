@@ -1,0 +1,16 @@
+accelerate==1.12.0
+fastapi==0.135.1
+fastapi-cli==0.0.24
+fastapi-cloud-cli==0.14.0
+huggingface-hub==0.36.2
+jinja2==3.1.6
+numpy==2.2.6
+pillow==12.1.1
+requests==2.32.5
+torch==2.10.0+cu130
+torch-c-dlpack-ext==0.1.5
+torchaudio==2.10.0+cu130
+torchvision==0.25.0+cu130
+transformers==4.57.6
+uvicorn==0.41.0
+vllm==0.16.1rc1.dev284+g3ee68590c
