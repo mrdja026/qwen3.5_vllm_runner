@@ -175,11 +175,52 @@ https://grok.com/c/45a042e2-03e2-4f97-830c-381910846b6a?rid=08054280-373e-49a6-9
 Official guieds from hf, and qwen3 cookbok fail because this is a wsl setup, so a lot of rc version of transformers and vllm had to be instaled since main version of VLLM has some architercutral clashes with multimodal support with qwen3.5 (it does not recognize the param as valid)
 
 
+Tested on 16 gb vram NVIDIA-RTX-4080 needs more testing and scripting around to see how many tokens per second
+
 # Text completion
 [17:55:09] mrdjan  $   ~/workspace/qwen_grok  vllm serve Qwen/Qwen3.5-4B \
   --dtype bfloat16 \
   --gpu-memory-utilization 0.90 \
   --max-model-len 32768 \
   --reasoning-parser qwen3 
+
+Call with 
+
+curl http://localhost:8000/v1/chat/completions   -H "Content-Type: application/json"   -d '{
+    "model": "Qwen/Qwen3.5-4B",
+    "messages": [{"role": "user", "content": "Plan a trip from Belgrade to Novi Sad by train, including costs and schedule. Think step by step."}],
+    "temperature": 0.6,
+    "max_tokens": 400
+  }'
+
 # Tool calling partialy working Qwen being qwen(maybe) + skill issues + wsl (maybe)
-  vllm serve Qwen/Qwen3.5-4B   --dtype bfloat16   --gpu-memory-utilization 0.90   --max-model-len 32768   --reasoning-parser qwen3   --enable-auto-tool-choice   --tool-call-parser hermes
+  vllm serve Qwen/Qwen3.5-4B   --dtype bfloat16   --gpu-memory-utilization 0.90   --max-model-len 32768   --reasoning-parser qwen3   --enable-auto-tool-choice   --tool-call-parser hermeus
+
+Call with  
+
+curl http://localhost:8000/v1/chat/completions   -H "Content-Type: application/json"   -d '{
+    "model": "Qwen/Qwen3.5-4B",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a tool-calling agent. When you decide to use a tool, respond ONLY with valid JSON in this exact format, nothing else:\n{\"tool_calls\": [{\"type\": \"function\", \"function\": {\"name\": \"tool_name\", \"arguments\": {}}}]}.\nDo NOT use XML, tags, or explanations outside JSON."
+      },
+      {
+        "role": "user",
+        "content": "Call the wazza function right now please."
+      }
+    ],
+    "temperature": 0.1,
+    "max_tokens": 150,
+    "tools": [
+      {
+        "type": "function",
+        "function": {
+          "name": "wazza",
+          "description": "Say wazzzaaa followed by the current unix timestamp",
+          "parameters": {
+            "type": "object",
+            "properties": {},
+            "required": []
+          }
+  }'"tool_choice": "auto" 
