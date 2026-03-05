@@ -224,3 +224,51 @@ curl http://localhost:8000/v1/chat/completions   -H "Content-Type: application/j
             "required": []
           }
   }'"tool_choice": "auto" 
+
+# Qwen TUI + Proxy (new)
+
+This repo now includes a small Textual TUI and a FastAPI proxy that adds
+streaming diagnostics (tokens/sec, first-token latency, total latency).
+
+## Run the proxy
+
+```bash
+python -m qwen_app.api
+```
+
+## Run the TUI
+
+```bash
+python -m qwen_app.tui
+```
+
+## Environment variables
+
+- `QWEN_UPSTREAM_URL` (default `http://localhost:8000`)
+- `QWEN_PROXY_URL` (default `http://localhost:9000`)
+- `QWEN_MODEL` (default `Qwen/Qwen3.5-4B`)
+- `QWEN_HISTORY_PATH` (default `~/.qwen_tui/history.json`)
+- `QWEN_TIMEOUT` (default `120`)
+- `QWEN_TEMPERATURE` (default `0.7`)
+- `QWEN_MAX_TOKENS` (default `512`)
+
+## Smoke tests
+
+Streaming proxy test:
+
+```bash
+chmod +x smoke_test_stream.sh
+./smoke_test_stream.sh "What is your name?"
+```
+
+Non-streaming proxy test:
+
+```bash
+chmod +x smoke_test_nonstream.sh
+./smoke_test_nonstream.sh "What is your name?"
+```
+
+# TODO
+Remove the thinkking proces, on expand
+Make the text selectable
+Add tool supoport for what is your name where your name is hardocded as "Bob"
